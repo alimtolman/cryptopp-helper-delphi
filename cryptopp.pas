@@ -1,9 +1,9 @@
-unit cryptopp;
+unit CryptoPP;
 
 interface
 
 uses
-  System.SysUtils, cryptopp_lib;
+  System.SysUtils, CryptoPP_Lib;
 
 type
   TKeyPair = record
@@ -52,7 +52,7 @@ type
     function Decrypt(const CipherData: TArray<Byte>; const PrivateKey: TArray<Byte>): TArray<Byte>;
     function Encrypt(const Data: TArray<Byte>; const PublicKey: TArray<Byte>): TArray<Byte>;
     function ExportPublicKey(const PrivateKey: TArray<Byte>): TArray<Byte>;
-    function KeyPair(const KeySize: Cardinal): TKeyPair;
+    function KeyPair(const KeySize: Cardinal; const Exponent: Cardinal = 65537): TKeyPair;
     function NoPadding_Decrypt(const CipherData: TArray<Byte>; const PrivateKey: TArray<Byte>): TArray<Byte>;
     function NoPadding_Encrypt(const Data: TArray<Byte>; const PublicKey: TArray<Byte>): TArray<Byte>;
     function Oaep_Decrypt(const HashMethod: string; const CipherData: TArray<Byte>; const PrivateKey: TArray<Byte>): TArray<Byte>;
@@ -374,7 +374,7 @@ begin
   Result := ResultBytes;
 end;
 
-function TRsa.KeyPair(const KeySize: Cardinal): TKeyPair;
+function TRsa.KeyPair(const KeySize: Cardinal; const Exponent: Cardinal = 65537): TKeyPair;
 var
   PrivateKeyPointer: PByte;
   PrivateKeySize: Cardinal;
@@ -382,7 +382,7 @@ var
   PublicKeySize: Cardinal;
   KeyPair: TKeyPair;
 begin
-  cryptopp_lib.rsa_key_pair(KeySize, PrivateKeyPointer, PrivateKeySize, PublicKeyPointer, PublicKeySize);
+  cryptopp_lib.rsa_key_pair(KeySize, PrivateKeyPointer, PrivateKeySize, PublicKeyPointer, PublicKeySize, Exponent);
 
   SetLength(KeyPair.PrivateKey, PrivateKeySize);
   SetLength(KeyPair.PublicKey, PublicKeySize);
