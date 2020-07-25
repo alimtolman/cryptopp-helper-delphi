@@ -1,4 +1,4 @@
-unit cryptopp_lib;
+unit CryptoPP_Lib;
 
 interface
 
@@ -303,8 +303,9 @@ procedure rsa_export_public_key(const private_key_bytes: PByte; const private_ke
  * @param private_key_size - pointer to unsigned integer to store 'private_key_bytes' size
  * @param public_key_bytes - pointer to null byte array to store public key
  * @param public_key_size - pointer to unsigned integer to store 'public_key_bytes' size
+ * @param exponent - define key exponent value, default value = 65537
  *)
-procedure rsa_key_pair(const key_size: Cardinal; var private_key_bytes: PByte; var private_key_size: Cardinal; var public_key_bytes: PByte; var public_key_size: Cardinal); cdecl; external DllName;
+procedure rsa_key_pair(const key_size: Cardinal; var private_key_bytes: PByte; var private_key_size: Cardinal; var public_key_bytes: PByte; var public_key_size: Cardinal; const exponent: Cardinal = 65537); cdecl; external DllName;
 
 (**
  * Decrypt data with rsa no padding
