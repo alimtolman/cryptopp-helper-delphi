@@ -114,6 +114,38 @@ procedure aes_ecb_decrypt(const input_bytes: PByte; const input_size: Cardinal; 
  *)
 procedure aes_ecb_encrypt(const input_bytes: PByte; const input_size: Cardinal; const key_bytes: PByte; const key_size: Cardinal; var output_bytes: PByte; var ouput_size: Cardinal; const zeros_padding: Boolean = False); cdecl; external DllName;
 
+(**
+ * Decrypt data with aes-gcm
+ *
+ * @note Caller MUST delete 'output_bytes' with helper function 'delete_byte_array'
+ *
+ * @param input_bytes - byte array of cipher data
+ * @param input_size - size of 'input_bytes'
+ * @param key_bytes - key byte array
+ * @param key_size - size of 'key_bytes'
+ * @param iv_bytes - initialization vector byte array
+ * @param iv_size - size of 'iv_bytes'
+ * @param output_bytes - pointer to null byte array to store decrypted data
+ * @param output_size - pointer to unsigned integer to store 'output_bytes' size
+ *)
+procedure aes_gcm_decrypt(const input_bytes: PByte; const input_size: Cardinal; const key_bytes: PByte; const key_size: Cardinal; const iv_bytes: PByte; const iv_size: Cardinal; var output_bytes: PByte; var ouput_size: Cardinal); cdecl; external DllName;
+
+(**
+ * Encrypt data with aes-gcm
+ *
+ * @note Caller MUST delete 'output_bytes' with helper function 'delete_byte_array'
+ *
+ * @param input_bytes - byte array of data to encrypt
+ * @param input_size - size of 'input_bytes'
+ * @param key_bytes - key byte array
+ * @param key_size - size of 'key_bytes'
+ * @param iv_bytes - initialization vector byte array
+ * @param iv_size - size of 'iv_bytes'
+ * @param output_bytes - pointer to null byte array to store cipher data
+ * @param output_size - pointer to unsigned integer to store 'output_bytes' size
+ *)
+procedure aes_gcm_encrypt(const input_bytes: PByte; const input_size: Cardinal; const key_bytes: PByte; const key_size: Cardinal; const iv_bytes: PByte; const iv_size: Cardinal; var output_bytes: PByte; var ouput_size: Cardinal); cdecl; external DllName;
+
 {$endregion}
 
 {$region 'big integer'}
