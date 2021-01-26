@@ -20,6 +20,8 @@ type
     function Cfb_Encrypt(const Data: TArray<Byte>; const Key: TArray<Byte>; const Iv: TArray<Byte>): TArray<Byte>;
     function Ecb_Decrypt(const CipherData: TArray<Byte>; const Key: TArray<Byte>; const ZerosPadding: Boolean = False): TArray<Byte>;
     function Ecb_Encrypt(const Data: TArray<Byte>; const Key: TArray<Byte>; const ZerosPadding: Boolean = False): TArray<Byte>;
+    function Gcm_Decrypt(const CipherData: TArray<Byte>; const Key: TArray<Byte>; const Iv: TArray<Byte>): TArray<Byte>;
+    function Gcm_Encrypt(const Data: TArray<Byte>; const Key: TArray<Byte>; const Iv: TArray<Byte>): TArray<Byte>;
   end;
 
   TBigInteger = record
@@ -179,6 +181,38 @@ begin
   Result := ResultBytes;
 end;
 
+function TAes.Gcm_Decrypt(const CipherData: TArray<Byte>; const Key: TArray<Byte>; const Iv: TArray<Byte>): TArray<Byte>;
+var
+  OutputPointer: PByte;
+  OutputSize: Cardinal;
+  ResultBytes: TArray<Byte>;
+begin
+  cryptopp_lib.aes_gcm_decrypt(@CipherData[0], Length(CipherData), @Key[0], Length(Key), @Iv[0], Length(Iv), OutputPointer, OutputSize);
+
+  SetLength(ResultBytes, OutputSize);
+  Move(OutputPointer^, ResultBytes[0], OutputSize);
+
+  cryptopp_lib.delete_byte_array(OutputPointer);
+
+  Result := ResultBytes;
+end;
+
+function TAes.Gcm_Encrypt(const Data: TArray<Byte>; const Key: TArray<Byte>; const Iv: TArray<Byte>): TArray<Byte>;
+var
+  OutputPointer: PByte;
+  OutputSize: Cardinal;
+  ResultBytes: TArray<Byte>;
+begin
+  cryptopp_lib.aes_gcm_encrypt(@Data[0], Length(Data), @Key[0], Length(Key), @Iv[0], Length(Iv), OutputPointer, OutputSize);
+
+  SetLength(ResultBytes, OutputSize);
+  Move(OutputPointer^, ResultBytes[0], OutputSize);
+
+  cryptopp_lib.delete_byte_array(OutputPointer);
+
+  Result := ResultBytes;
+end;
+
 {---------- TBigInteger ----------}
 
 function TBigInteger.ModPow(const ValueHex: string; const ExponentHex: string; const ModulusHex: string): TArray<Byte>;
@@ -207,7 +241,7 @@ var
   PublicKeySize: Cardinal;
   KeyPair: TKeyPair;
 begin
-  cryptopp_lib.dh_key_pair(PAnsiChar(AnsiString(PHex)), PAnsiChar(AnsiString(GHex)), PrivateKeyPointer, PrivateKeySize, PublicKeyPointer, PublicKeySize);
+  cryptopp_lib.dh_key_pair(PAnsiChar(AnsiString('0x' + PHex)), PAnsiChar(AnsiString('0x' + GHex)), PrivateKeyPointer, PrivateKeySize, PublicKeyPointer, PublicKeySize);
 
   SetLength(KeyPair.PrivateKey, PrivateKeySize);
   SetLength(KeyPair.PublicKey, PublicKeySize);
@@ -226,7 +260,7 @@ var
   OutputSize: Cardinal;
   ResultBytes: TArray<Byte>;
 begin
-  cryptopp_lib.dh_shared_key(PAnsiChar(AnsiString(PHex)), PAnsiChar(AnsiString(GHex)), @PrivateKey[0], @OtherPublicKey[0], OutputPointer, OutputSize);
+  cryptopp_lib.dh_shared_key(PAnsiChar(AnsiString('0x' + PHex)), PAnsiChar(AnsiString('0x' + GHex)), @PrivateKey[0], @OtherPublicKey[0], OutputPointer, OutputSize);
 
   SetLength(ResultBytes, OutputSize);
   Move(OutputPointer^, ResultBytes[0], OutputSize);
