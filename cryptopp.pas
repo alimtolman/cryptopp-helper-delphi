@@ -12,21 +12,27 @@ type
     PublicKey: TArray<Byte>;
   end;
 
-  TAes = record
+  TAES = record
   public
-    function Cbc_Decrypt(const CipherData: TArray<Byte>; const Key: TArray<Byte>; const Iv: TArray<Byte>; const ZerosPadding: Boolean = False): TArray<Byte>;
-    function Cbc_Encrypt(const Data: TArray<Byte>; const Key: TArray<Byte>; const Iv: TArray<Byte>; const ZerosPadding: Boolean = False): TArray<Byte>;
-    function Cfb_Decrypt(const CipherData: TArray<Byte>; const Key: TArray<Byte>; const Iv: TArray<Byte>): TArray<Byte>;
-    function Cfb_Encrypt(const Data: TArray<Byte>; const Key: TArray<Byte>; const Iv: TArray<Byte>): TArray<Byte>;
+    function Cbc_Decrypt(const CipherData: TArray<Byte>; const Key: TArray<Byte>; const IV: TArray<Byte>; const ZerosPadding: Boolean = False): TArray<Byte>;
+    function Cbc_Encrypt(const Data: TArray<Byte>; const Key: TArray<Byte>; const IV: TArray<Byte>; const ZerosPadding: Boolean = False): TArray<Byte>;
+    function Cfb_Decrypt(const CipherData: TArray<Byte>; const Key: TArray<Byte>; const IV: TArray<Byte>): TArray<Byte>;
+    function Cfb_Encrypt(const Data: TArray<Byte>; const Key: TArray<Byte>; const IV: TArray<Byte>): TArray<Byte>;
     function Ecb_Decrypt(const CipherData: TArray<Byte>; const Key: TArray<Byte>; const ZerosPadding: Boolean = False): TArray<Byte>;
     function Ecb_Encrypt(const Data: TArray<Byte>; const Key: TArray<Byte>; const ZerosPadding: Boolean = False): TArray<Byte>;
-    function Gcm_Decrypt(const CipherData: TArray<Byte>; const Key: TArray<Byte>; const Iv: TArray<Byte>): TArray<Byte>;
-    function Gcm_Encrypt(const Data: TArray<Byte>; const Key: TArray<Byte>; const Iv: TArray<Byte>): TArray<Byte>;
+    function Gcm_Decrypt(const CipherData: TArray<Byte>; const Key: TArray<Byte>; const IV: TArray<Byte>): TArray<Byte>;
+    function Gcm_Encrypt(const Data: TArray<Byte>; const Key: TArray<Byte>; const IV: TArray<Byte>): TArray<Byte>;
   end;
 
   TBigInteger = record
   public
     function ModPow(const ValueHex: string; const ExponentHex: string; const ModulusHex: string): TArray<Byte>;
+  end;
+
+  TChaCha20 = record
+  public
+    function Decrypt(const CipherData: TArray<Byte>; const Key: TArray<Byte>; const IV: TArray<Byte>): TArray<Byte>;
+    function Encrypt(const Data: TArray<Byte>; const Key: TArray<Byte>; const IV: TArray<Byte>): TArray<Byte>;
   end;
 
   TDiffieHellman = record
@@ -35,11 +41,19 @@ type
     function SharedKey(const PHex: string; const GHex: string; const PrivateKey: TArray<Byte>; const OtherPublicKey: TArray<Byte>): TArray<Byte>;
   end;
 
+  TECDSA = record
+  public
+    function ExportPublicKey(const PrivateKey: TArray<Byte>): TArray<Byte>;
+    function KeyPair(const EllipticCurve: Byte = 0): TKeyPair;
+    function Sign(const HashMethod: string; const Data: TArray<Byte>; const PrivateKey: TArray<Byte>): TArray<Byte>;
+    function Verify(const HashMethod: string; const Data: TArray<Byte>; const Signature: TArray<Byte>; const PublicKey: TArray<Byte>): Boolean;
+  end;
+
   THash = record
   public
-    function Md2(const Data: TArray<Byte>): TArray<Byte>;
-    function Md4(const Data: TArray<Byte>): TArray<Byte>;
-    function Md5(const Data: TArray<Byte>): TArray<Byte>;
+    function MD2(const Data: TArray<Byte>): TArray<Byte>;
+    function MD4(const Data: TArray<Byte>): TArray<Byte>;
+    function MD5(const Data: TArray<Byte>): TArray<Byte>;
     function Poly1305_Tls(const Data: TArray<Byte>; const Key: TArray<Byte>): TArray<Byte>;
   end;
 
@@ -47,9 +61,10 @@ type
   public
     function HmacSha1(const Password: TArray<Byte>; const Salt: TArray<Byte>; const IterationsCount: Cardinal; const ResultSize: Cardinal = 32): TArray<Byte>;
     function HmacSha256(const Password: TArray<Byte>; const Salt: TArray<Byte>; const IterationsCount: Cardinal; const ResultSize: Cardinal = 32): TArray<Byte>;
+    function HmacSha512(const Password: TArray<Byte>; const Salt: TArray<Byte>; const IterationsCount: Cardinal; const ResultSize: Cardinal = 32): TArray<Byte>;
   end;
 
-  TRsa = record
+  TRSA = record
   public
     function Decrypt(const CipherData: TArray<Byte>; const PrivateKey: TArray<Byte>): TArray<Byte>;
     function Encrypt(const Data: TArray<Byte>; const PublicKey: TArray<Byte>): TArray<Byte>;
@@ -63,22 +78,31 @@ type
     function Pss_Verify(const HashMethod: string; const Data: TArray<Byte>; const Signature: TArray<Byte>; const PublicKey: TArray<Byte>): Boolean;
   end;
 
+  TSalsa20 = record
+  public
+    function Decrypt(const CipherData: TArray<Byte>; const Key: TArray<Byte>; const IV: TArray<Byte>): TArray<Byte>;
+    function Encrypt(const Data: TArray<Byte>; const Key: TArray<Byte>; const IV: TArray<Byte>): TArray<Byte>;
+  end;
+
   TXSalsa20 = record
   public
-    function Decrypt(const CipherData: TArray<Byte>; const Key: TArray<Byte>; const Iv: TArray<Byte>): TArray<Byte>;
-    function Encrypt(const Data: TArray<Byte>; const Key: TArray<Byte>; const Iv: TArray<Byte>): TArray<Byte>;
-    function Poly1305_Tls_Decrypt(const CipherData: TArray<Byte>; const Key: TArray<Byte>; const Iv: TArray<Byte>; const Verify: Boolean = True): TArray<Byte>;
-    function Poly1305_Tls_Encrypt(const Data: TArray<Byte>; const Key: TArray<Byte>; const Iv: TArray<Byte>): TArray<Byte>;
+    function Decrypt(const CipherData: TArray<Byte>; const Key: TArray<Byte>; const IV: TArray<Byte>): TArray<Byte>;
+    function Encrypt(const Data: TArray<Byte>; const Key: TArray<Byte>; const IV: TArray<Byte>): TArray<Byte>;
+    function Poly1305_Tls_Decrypt(const CipherData: TArray<Byte>; const Key: TArray<Byte>; const IV: TArray<Byte>; const Verify: Boolean = True): TArray<Byte>;
+    function Poly1305_Tls_Encrypt(const Data: TArray<Byte>; const Key: TArray<Byte>; const IV: TArray<Byte>): TArray<Byte>;
   end;
 
   TCrypto = record
   public
-    Aes: TAes;
+    AES: TAES;
     BigInteger: TBigInteger;
+    ChaCha20: TChaCha20;
     DiffieHellman: TDiffieHellman;
+    ECDSA: TECDSA;
     Hash: THash;
     PBKDF2: TPBKDF2;
-    Rsa: TRsa;
+    RSA: TRSA;
+    Salsa20: TSalsa20;
     XSalsa20: TXSalsa20;
   end;
 
@@ -87,15 +111,15 @@ var
 
 implementation
 
-{---------- TAes ----------}
+{---------- TAES ----------}
 
-function TAes.Cbc_Decrypt(const CipherData: TArray<Byte>; const Key: TArray<Byte>; const Iv: TArray<Byte>; const ZerosPadding: Boolean = False): TArray<Byte>;
+function TAES.Cbc_Decrypt(const CipherData: TArray<Byte>; const Key: TArray<Byte>; const IV: TArray<Byte>; const ZerosPadding: Boolean = False): TArray<Byte>;
 var
   OutputPointer: PByte;
   OutputSize: Cardinal;
   ResultBytes: TArray<Byte>;
 begin
-  cryptopp_lib.aes_cbc_decrypt(@CipherData[0], Length(CipherData), @Key[0], Length(Key), @Iv[0], OutputPointer, OutputSize, ZerosPadding);
+  cryptopp_lib.aes_cbc_decrypt(@CipherData[0], Length(CipherData), @Key[0], Length(Key), @IV[0], OutputPointer, OutputSize, ZerosPadding);
 
   SetLength(ResultBytes, OutputSize);
   Move(OutputPointer^, ResultBytes[0], OutputSize);
@@ -105,13 +129,13 @@ begin
   Result := ResultBytes;
 end;
 
-function TAes.Cbc_Encrypt(const Data: TArray<Byte>; const Key: TArray<Byte>; const Iv: TArray<Byte>; const ZerosPadding: Boolean = False): TArray<Byte>;
+function TAES.Cbc_Encrypt(const Data: TArray<Byte>; const Key: TArray<Byte>; const IV: TArray<Byte>; const ZerosPadding: Boolean = False): TArray<Byte>;
 var
   OutputPointer: PByte;
   OutputSize: Cardinal;
   ResultBytes: TArray<Byte>;
 begin
-  cryptopp_lib.aes_cbc_encrypt(@Data[0], Length(Data), @Key[0], Length(Key), @Iv[0], OutputPointer, OutputSize, ZerosPadding);
+  cryptopp_lib.aes_cbc_encrypt(@Data[0], Length(Data), @Key[0], Length(Key), @IV[0], OutputPointer, OutputSize, ZerosPadding);
 
   SetLength(ResultBytes, OutputSize);
   Move(OutputPointer^, ResultBytes[0], OutputSize);
@@ -121,7 +145,7 @@ begin
   Result := ResultBytes;
 end;
 
-function TAes.Cfb_Decrypt(const CipherData: TArray<Byte>; const Key: TArray<Byte>; const Iv: TArray<Byte>): TArray<Byte>;
+function TAES.Cfb_Decrypt(const CipherData: TArray<Byte>; const Key: TArray<Byte>; const IV: TArray<Byte>): TArray<Byte>;
 var
   OutputPointer: PByte;
   ResultBytes: TArray<Byte>;
@@ -130,12 +154,12 @@ begin
 
   OutputPointer := @ResultBytes[0];
 
-  cryptopp_lib.aes_cfb_decrypt(@CipherData[0], Length(CipherData), @Key[0], Length(Key), @Iv[0], OutputPointer);
+  cryptopp_lib.aes_cfb_decrypt(@CipherData[0], Length(CipherData), @Key[0], Length(Key), @IV[0], OutputPointer);
 
   Result := ResultBytes;
 end;
 
-function TAes.Cfb_Encrypt(const Data: TArray<Byte>; const Key: TArray<Byte>; const Iv: TArray<Byte>): TArray<Byte>;
+function TAES.Cfb_Encrypt(const Data: TArray<Byte>; const Key: TArray<Byte>; const IV: TArray<Byte>): TArray<Byte>;
 var
   OutputPointer: PByte;
   ResultBytes: TArray<Byte>;
@@ -144,12 +168,12 @@ begin
 
   OutputPointer := @ResultBytes[0];
 
-  cryptopp_lib.aes_cfb_encrypt(@Data[0], Length(Data), @Key[0], Length(Key), @Iv[0], OutputPointer);
+  cryptopp_lib.aes_cfb_encrypt(@Data[0], Length(Data), @Key[0], Length(Key), @IV[0], OutputPointer);
 
   Result := ResultBytes;
 end;
 
-function TAes.Ecb_Decrypt(const CipherData: TArray<Byte>; const Key: TArray<Byte>; const ZerosPadding: Boolean = False): TArray<Byte>;
+function TAES.Ecb_Decrypt(const CipherData: TArray<Byte>; const Key: TArray<Byte>; const ZerosPadding: Boolean = False): TArray<Byte>;
 var
   OutputPointer: PByte;
   OutputSize: Cardinal;
@@ -165,7 +189,7 @@ begin
   Result := ResultBytes;
 end;
 
-function TAes.Ecb_Encrypt(const Data: TArray<Byte>; const Key: TArray<Byte>; const ZerosPadding: Boolean = False): TArray<Byte>;
+function TAES.Ecb_Encrypt(const Data: TArray<Byte>; const Key: TArray<Byte>; const ZerosPadding: Boolean = False): TArray<Byte>;
 var
   OutputPointer: PByte;
   OutputSize: Cardinal;
@@ -181,13 +205,13 @@ begin
   Result := ResultBytes;
 end;
 
-function TAes.Gcm_Decrypt(const CipherData: TArray<Byte>; const Key: TArray<Byte>; const Iv: TArray<Byte>): TArray<Byte>;
+function TAES.Gcm_Decrypt(const CipherData: TArray<Byte>; const Key: TArray<Byte>; const IV: TArray<Byte>): TArray<Byte>;
 var
   OutputPointer: PByte;
   OutputSize: Cardinal;
   ResultBytes: TArray<Byte>;
 begin
-  cryptopp_lib.aes_gcm_decrypt(@CipherData[0], Length(CipherData), @Key[0], Length(Key), @Iv[0], Length(Iv), OutputPointer, OutputSize);
+  cryptopp_lib.aes_gcm_decrypt(@CipherData[0], Length(CipherData), @Key[0], Length(Key), @IV[0], Length(IV), OutputPointer, OutputSize);
 
   SetLength(ResultBytes, OutputSize);
   Move(OutputPointer^, ResultBytes[0], OutputSize);
@@ -197,13 +221,13 @@ begin
   Result := ResultBytes;
 end;
 
-function TAes.Gcm_Encrypt(const Data: TArray<Byte>; const Key: TArray<Byte>; const Iv: TArray<Byte>): TArray<Byte>;
+function TAES.Gcm_Encrypt(const Data: TArray<Byte>; const Key: TArray<Byte>; const IV: TArray<Byte>): TArray<Byte>;
 var
   OutputPointer: PByte;
   OutputSize: Cardinal;
   ResultBytes: TArray<Byte>;
 begin
-  cryptopp_lib.aes_gcm_encrypt(@Data[0], Length(Data), @Key[0], Length(Key), @Iv[0], Length(Iv), OutputPointer, OutputSize);
+  cryptopp_lib.aes_gcm_encrypt(@Data[0], Length(Data), @Key[0], Length(Key), @IV[0], Length(IV), OutputPointer, OutputSize);
 
   SetLength(ResultBytes, OutputSize);
   Move(OutputPointer^, ResultBytes[0], OutputSize);
@@ -227,6 +251,36 @@ begin
   Move(OutputPointer^, ResultBytes[0], OutputSize);
 
   cryptopp_lib.delete_byte_array(OutputPointer);
+
+  Result := ResultBytes;
+end;
+
+{---------- TChaCha20 ----------}
+
+function TChaCha20.Decrypt(const CipherData: TArray<Byte>; const Key: TArray<Byte>; const IV: TArray<Byte>): TArray<Byte>;
+var
+  OutputPointer: PByte;
+  ResultBytes: TArray<Byte>;
+begin
+  SetLength(ResultBytes, Length(CipherData));
+
+  OutputPointer := @ResultBytes[0];
+
+  cryptopp_lib.chacha20_decrypt(@CipherData[0], Length(CipherData), @Key[0], Length(Key), @IV[0], OutputPointer);
+
+  Result := ResultBytes;
+end;
+
+function TChaCha20.Encrypt(const Data: TArray<Byte>; const Key: TArray<Byte>; const IV: TArray<Byte>): TArray<Byte>;
+var
+  OutputPointer: PByte;
+  ResultBytes: TArray<Byte>;
+begin
+  SetLength(ResultBytes, Length(Data));
+
+  OutputPointer := @ResultBytes[0];
+
+  cryptopp_lib.chacha20_decrypt(@Data[0], Length(Data), @Key[0], Length(Key), @IV[0], OutputPointer);
 
   Result := ResultBytes;
 end;
@@ -270,9 +324,111 @@ begin
   Result := ResultBytes;
 end;
 
+{---------- TECDSA ----------}
+
+function TECDSA.ExportPublicKey(const PrivateKey: TArray<Byte>): TArray<Byte>;
+var
+  OutputPointer: PByte;
+  OutputSize: Cardinal;
+  ResultBytes: TArray<Byte>;
+begin
+  cryptopp_lib.ecdsa_export_public_key(@PrivateKey[0], Length(PrivateKey), OutputPointer, OutputSize);
+
+  SetLength(ResultBytes, OutputSize);
+  Move(OutputPointer^, ResultBytes[0], OutputSize);
+
+  cryptopp_lib.delete_byte_array(OutputPointer);
+
+  Result := ResultBytes;
+end;
+
+function TECDSA.KeyPair(const EllipticCurve: Byte = 0): TKeyPair;
+var
+  PrivateKeyPointer: PByte;
+  PrivateKeySize: Cardinal;
+  PublicKeyPointer: PByte;
+  PublicKeySize: Cardinal;
+  KeyPair: TKeyPair;
+begin
+  cryptopp_lib.ecdsa_key_pair(EllipticCurve, PrivateKeyPointer, PrivateKeySize, PublicKeyPointer, PublicKeySize);
+
+  SetLength(KeyPair.PrivateKey, PrivateKeySize);
+  SetLength(KeyPair.PublicKey, PublicKeySize);
+  Move(PrivateKeyPointer^, KeyPair.PrivateKey[0], PrivateKeySize);
+  Move(PublicKeyPointer^, KeyPair.PublicKey[0], PublicKeySize);
+
+  cryptopp_lib.delete_byte_array(PrivateKeyPointer);
+  cryptopp_lib.delete_byte_array(PublicKeyPointer);
+
+  Result := KeyPair;
+end;
+
+function TECDSA.Sign(const HashMethod: string; const Data: TArray<Byte>; const PrivateKey: TArray<Byte>): TArray<Byte>;
+var
+  OutputPointer: PByte;
+  OutputSize: Cardinal;
+  Head, ResultBytes: TArray<Byte>;
+begin
+  OutputPointer := nil;
+  ResultBytes := [];
+
+  if HashMethod.ToLower().Equals('sha1') then
+    cryptopp_lib.ecdsa_sha1_sign(@Data[0], Length(Data), @PrivateKey[0], Length(PrivateKey), OutputPointer, OutputSize)
+  else if HashMethod.ToLower().Equals('sha256') then
+    cryptopp_lib.ecdsa_sha256_sign(@Data[0], Length(Data), @PrivateKey[0], Length(PrivateKey), OutputPointer, OutputSize);
+
+  if Assigned(OutputPointer) then
+  begin
+    SetLength(ResultBytes, OutputSize);
+    Move(OutputPointer^, ResultBytes[0], OutputSize);
+
+    cryptopp_lib.delete_byte_array(OutputPointer);
+  end;
+
+  if ResultBytes[32] > 127 then
+    Head := [2, 33, 00]
+  else
+    Head := [2, 32];
+
+  Insert(Head, ResultBytes, 32);
+
+  if ResultBytes[0] > 127 then
+    Head := [2, 33, 00]
+  else
+    Head := [2, 32];
+
+  ResultBytes := Head + ResultBytes;
+  Result := [48, Length(ResultBytes)] + ResultBytes;
+end;
+
+function TECDSA.Verify(const HashMethod: string; const Data: TArray<Byte>; const Signature: TArray<Byte>; const PublicKey: TArray<Byte>): Boolean;
+var
+  ResultBoolean: Boolean;
+  R, S, SignatureFormatted: TArray<Byte>;
+begin
+  ResultBoolean := False;
+  R := Copy(Signature, 4, Signature[3]);
+  S := Copy(Signature, Signature[3] + 6, Signature[Signature[3] + 1]);
+
+  if Length(R) <> 32 then
+    R := Copy(R, 1, 32);
+
+  if Length(S) <> 32 then
+    S := Copy(S, 1, 32);
+
+  SignatureFormatted := R + S;
+
+  if HashMethod.ToLower().Equals('sha1') then
+    cryptopp_lib.ecdsa_sha1_verify(@Data[0], Length(Data), @SignatureFormatted[0], Length(SignatureFormatted), @PublicKey[0], Length(PublicKey), ResultBoolean)
+  else if HashMethod.ToLower().Equals('sha256') then
+    cryptopp_lib.ecdsa_sha256_verify(@Data[0], Length(Data), @SignatureFormatted[0], Length(SignatureFormatted), @PublicKey[0], Length(PublicKey), ResultBoolean);
+
+  Result := ResultBoolean;
+end;
+
 {---------- THash ----------}
 
-function THash.Md2(const Data: TArray<Byte>): TArray<Byte>;
+function THash.MD2(const Data: TArray<Byte>): TArray<Byte>;
 var
   OutputPointer: PByte;
   ResultBytes: TArray<Byte>;
@@ -286,7 +442,7 @@ begin
   Result := ResultBytes;
 end;
 
-function THash.Md4(const Data: TArray<Byte>): TArray<Byte>;
+function THash.MD4(const Data: TArray<Byte>): TArray<Byte>;
 var
   OutputPointer: PByte;
   ResultBytes: TArray<Byte>;
@@ -300,7 +456,7 @@ begin
   Result := ResultBytes;
 end;
 
-function THash.Md5(const Data: TArray<Byte>): TArray<Byte>;
+function THash.MD5(const Data: TArray<Byte>): TArray<Byte>;
 var
   OutputPointer: PByte;
   ResultBytes: TArray<Byte>;
@@ -358,15 +514,29 @@ begin
   Result := ResultBytes;
 end;
 
-{---------- TRsa ----------}
+function TPBKDF2.HmacSha512(const Password: TArray<Byte>; const Salt: TArray<Byte>; const IterationsCount: Cardinal; const ResultSize: Cardinal = 32): TArray<Byte>;
+var
+  OutputPointer: PByte;
+  ResultBytes: TArray<Byte>;
+begin
+  SetLength(ResultBytes, ResultSize);
 
-function TRsa.Decrypt(const CipherData: TArray<Byte>; const PrivateKey: TArray<Byte>): TArray<Byte>;
+  OutputPointer := @ResultBytes[0];
+
+  cryptopp_lib.pbkdf2_hmac_sha512(@Password[0], Length(Password), @Salt[0], Length(Salt), IterationsCount, OutputPointer, ResultSize);
+
+  Result := ResultBytes;
+end;
+
+{---------- TRSA ----------}
+
+function TRSA.Decrypt(const CipherData: TArray<Byte>; const PrivateKey: TArray<Byte>): TArray<Byte>;
 var
   OutputPointer: PByte;
   OutputSize: Cardinal;
   ResultBytes: TArray<Byte>;
 begin
-  cryptopp_lib.rsa_decrypt(@CipherData[0], Length(CipherData), @PrivateKey[0], Length(PrivateKey), OutputPointer, OutputSize);
+  cryptopp_lib.rsa_ecb_decrypt(@CipherData[0], Length(CipherData), @PrivateKey[0], Length(PrivateKey), OutputPointer, OutputSize);
 
   SetLength(ResultBytes, OutputSize);
   Move(OutputPointer^, ResultBytes[0], OutputSize);
@@ -376,13 +546,13 @@ begin
   Result := ResultBytes;
 end;
 
-function TRsa.Encrypt(const Data: TArray<Byte>; const PublicKey: TArray<Byte>): TArray<Byte>;
+function TRSA.Encrypt(const Data: TArray<Byte>; const PublicKey: TArray<Byte>): TArray<Byte>;
 var
   OutputPointer: PByte;
   OutputSize: Cardinal;
   ResultBytes: TArray<Byte>;
 begin
-  cryptopp_lib.rsa_encrypt(@Data[0], Length(Data), @PublicKey[0], Length(PublicKey), OutputPointer, OutputSize);
+  cryptopp_lib.rsa_ecb_encrypt(@Data[0], Length(Data), @PublicKey[0], Length(PublicKey), OutputPointer, OutputSize);
 
   SetLength(ResultBytes, OutputSize);
   Move(OutputPointer^, ResultBytes[0], OutputSize);
@@ -392,7 +562,7 @@ begin
   Result := ResultBytes;
 end;
 
-function TRsa.ExportPublicKey(const PrivateKey: TArray<Byte>): TArray<Byte>;
+function TRSA.ExportPublicKey(const PrivateKey: TArray<Byte>): TArray<Byte>;
 var
   OutputPointer: PByte;
   OutputSize: Cardinal;
@@ -408,7 +578,7 @@ begin
   Result := ResultBytes;
 end;
 
-function TRsa.KeyPair(const KeySize: Cardinal; const Exponent: Cardinal = 65537): TKeyPair;
+function TRSA.KeyPair(const KeySize: Cardinal; const Exponent: Cardinal = 65537): TKeyPair;
 var
   PrivateKeyPointer: PByte;
   PrivateKeySize: Cardinal;
@@ -429,7 +599,7 @@ begin
   Result := KeyPair;
 end;
 
-function TRsa.NoPadding_Decrypt(const CipherData: TArray<Byte>; const PrivateKey: TArray<Byte>): TArray<Byte>;
+function TRSA.NoPadding_Decrypt(const CipherData: TArray<Byte>; const PrivateKey: TArray<Byte>): TArray<Byte>;
 var
   OutputPointer: PByte;
   OutputSize: Cardinal;
@@ -445,7 +615,7 @@ begin
   Result := ResultBytes;
 end;
 
-function TRsa.NoPadding_Encrypt(const Data: TArray<Byte>; const PublicKey: TArray<Byte>): TArray<Byte>;
+function TRSA.NoPadding_Encrypt(const Data: TArray<Byte>; const PublicKey: TArray<Byte>): TArray<Byte>;
 var
   OutputPointer: PByte;
   OutputSize: Cardinal;
@@ -461,7 +631,7 @@ begin
   Result := ResultBytes;
 end;
 
-function TRsa.Oaep_Decrypt(const HashMethod: string; const CipherData: TArray<Byte>; const PrivateKey: TArray<Byte>): TArray<Byte>;
+function TRSA.Oaep_Decrypt(const HashMethod: string; const CipherData: TArray<Byte>; const PrivateKey: TArray<Byte>): TArray<Byte>;
 var
   OutputPointer: PByte;
   OutputSize: Cardinal;
@@ -498,7 +668,7 @@ begin
   Result := ResultBytes;
 end;
 
-function TRsa.Oaep_Encrypt(const HashMethod: string; const Data: TArray<Byte>; const PublicKey: TArray<Byte>): TArray<Byte>;
+function TRSA.Oaep_Encrypt(const HashMethod: string; const Data: TArray<Byte>; const PublicKey: TArray<Byte>): TArray<Byte>;
 var
   OutputPointer: PByte;
   OutputSize: Cardinal;
@@ -535,7 +705,7 @@ begin
   Result := ResultBytes;
 end;
 
-function TRsa.Pss_Sign(const HashMethod: string; const Data: TArray<Byte>; const PrivateKey: TArray<Byte>): TArray<Byte>;
+function TRSA.Pss_Sign(const HashMethod: string; const Data: TArray<Byte>; const PrivateKey: TArray<Byte>): TArray<Byte>;
 var
   OutputPointer: PByte;
   OutputSize: Cardinal;
@@ -570,7 +740,7 @@ begin
   Result := ResultBytes;
 end;
 
-function TRsa.Pss_Verify(const HashMethod: string; const Data: TArray<Byte>; const Signature: TArray<Byte>; const PublicKey: TArray<Byte>): Boolean;
+function TRSA.Pss_Verify(const HashMethod: string; const Data: TArray<Byte>; const Signature: TArray<Byte>; const PublicKey: TArray<Byte>): Boolean;
 var
   ResultBoolean: Boolean;
 begin
@@ -594,9 +764,9 @@ begin
   Result := ResultBoolean;
 end;
 
-{---------- TXSalsa20 ----------}
+{---------- TSalsa20 ----------}
 
-function TXSalsa20.Decrypt(const CipherData: TArray<Byte>; const Key: TArray<Byte>; const Iv: TArray<Byte>): TArray<Byte>;
+function TSalsa20.Decrypt(const CipherData: TArray<Byte>; const Key: TArray<Byte>; const IV: TArray<Byte>): TArray<Byte>;
 var
   OutputPointer: PByte;
   ResultBytes: TArray<Byte>;
@@ -605,12 +775,12 @@ begin
 
   OutputPointer := @ResultBytes[0];
 
-  cryptopp_lib.xsalsa20_decrypt(@CipherData[0], Length(CipherData), @Key[0], @Iv[0], OutputPointer);
+  cryptopp_lib.salsa20_decrypt(@CipherData[0], Length(CipherData), @Key[0], Length(Key), @IV[0], OutputPointer);
 
   Result := ResultBytes;
 end;
 
-function TXSalsa20.Encrypt(const Data: TArray<Byte>; const Key: TArray<Byte>; const Iv: TArray<Byte>): TArray<Byte>;
+function TSalsa20.Encrypt(const Data: TArray<Byte>; const Key: TArray<Byte>; const IV: TArray<Byte>): TArray<Byte>;
 var
   OutputPointer: PByte;
   ResultBytes: TArray<Byte>;
@@ -619,12 +789,42 @@ begin
 
   OutputPointer := @ResultBytes[0];
 
-  cryptopp_lib.xsalsa20_decrypt(@Data[0], Length(Data), @Key[0], @Iv[0], OutputPointer);
+  cryptopp_lib.salsa20_decrypt(@Data[0], Length(Data), @Key[0], Length(Key), @IV[0], OutputPointer);
 
   Result := ResultBytes;
 end;
 
-function TXSalsa20.Poly1305_Tls_Decrypt(const CipherData: TArray<Byte>; const Key: TArray<Byte>; const Iv: TArray<Byte>; const Verify: Boolean = True): TArray<Byte>;
+{---------- TXSalsa20 ----------}
+
+function TXSalsa20.Decrypt(const CipherData: TArray<Byte>; const Key: TArray<Byte>; const IV: TArray<Byte>): TArray<Byte>;
+var
+  OutputPointer: PByte;
+  ResultBytes: TArray<Byte>;
+begin
+  SetLength(ResultBytes, Length(CipherData));
+
+  OutputPointer := @ResultBytes[0];
+
+  cryptopp_lib.xsalsa20_decrypt(@CipherData[0], Length(CipherData), @Key[0], @IV[0], OutputPointer);
+
+  Result := ResultBytes;
+end;
+
+function TXSalsa20.Encrypt(const Data: TArray<Byte>; const Key: TArray<Byte>; const IV: TArray<Byte>): TArray<Byte>;
+var
+  OutputPointer: PByte;
+  ResultBytes: TArray<Byte>;
+begin
+  SetLength(ResultBytes, Length(Data));
+
+  OutputPointer := @ResultBytes[0];
+
+  cryptopp_lib.xsalsa20_decrypt(@Data[0], Length(Data), @Key[0], @IV[0], OutputPointer);
+
+  Result := ResultBytes;
+end;
+
+function TXSalsa20.Poly1305_Tls_Decrypt(const CipherData: TArray<Byte>; const Key: TArray<Byte>; const IV: TArray<Byte>; const Verify: Boolean = True): TArray<Byte>;
 var
   OutputPointer: PByte;
   ResultBytes: TArray<Byte>;
@@ -633,12 +833,12 @@ begin
 
   OutputPointer := @ResultBytes[0];
 
-  cryptopp_lib.xsalsa20_poly1305_tls_decrypt(@CipherData[0], Length(CipherData), @Key[0], @Iv[0], OutputPointer, Verify);
+  cryptopp_lib.xsalsa20_poly1305_tls_decrypt(@CipherData[0], Length(CipherData), @Key[0], @IV[0], OutputPointer, Verify);
 
   Result := ResultBytes;
 end;
 
-function TXSalsa20.Poly1305_Tls_Encrypt(const Data: TArray<Byte>; const Key: TArray<Byte>; const Iv: TArray<Byte>): TArray<Byte>;
+function TXSalsa20.Poly1305_Tls_Encrypt(const Data: TArray<Byte>; const Key: TArray<Byte>; const IV: TArray<Byte>): TArray<Byte>;
 var
   OutputPointer: PByte;
   ResultBytes: TArray<Byte>;
@@ -647,7 +847,7 @@ begin
 
   OutputPointer := @ResultBytes[0];
 
-  cryptopp_lib.xsalsa20_poly1305_tls_encrypt(@Data[0], Length(Data), @Key[0], @Iv[0], OutputPointer);
+  cryptopp_lib.xsalsa20_poly1305_tls_encrypt(@Data[0], Length(Data), @Key[0], @IV[0], OutputPointer);
 
   Result := ResultBytes;
 end;
